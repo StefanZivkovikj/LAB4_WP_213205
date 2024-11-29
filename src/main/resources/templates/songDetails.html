@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Song Details</title>
+</head>
+<body>
+<header>
+  <h1>Song Title: <span th:text="${title}"></span></h1>
+</header>
+<section>
+  <h2>Genre: <span th:text="${genre}"></span></h2>
+  <h2>Year: <span th:text="${releaseYear}"></span></h2>
+  <h2>Performers:</h2>
+  <ul>
+    <li th:each="performer : ${performers}" th:text="${performer.firstName + ' ' + performer.lastName}"></li>
+  </ul>
+</section>
+</body>
+</html>

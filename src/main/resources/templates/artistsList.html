@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Add new Performer to Song</title>
+  <style type = "text/css">
+    body {
+      width: 800px;
+      margin: auto;
+    }
+    table {
+      width:100%;
+    }
+    table, td, th {
+      border: 1px solid black;
+      padding:3px 2px;
+    }
+    section {
+      float: left;
+      margin: 0 1.5%;
+      width: 63%;
+    }
+    aside {
+      float: right;
+      margin: 0 1.5%;
+      width: 30%;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Select the Artist to add to the List of Performers </h1>
+</header>
+<section>
+  <h2>Select the Artist to add to the List of Performers</h2>
+  <form th:action="@{/addArtist}" method="post">
+    <input type="radio" name="artistId" value="1"> Axl Rose <br/>
+    <input type="radio" name="artistId" value="2"> Jon Bon Jovi <br/>
+    <input type="radio" name="artistId" value="3"> David Bowie <br/>
+    <input type="hidden" name="trackId" th:value="${trackId}"> <!-- Correct Thymeleaf syntax -->
+    <input type="submit" value="Add artist">
+  </form>
+  <br/>
+
+
+</section>
+<aside>
+  <table>
+    <tr>
+      <!-- change to show selected trackId -->
+      <td><b>Track Id</b></td>
+      <td th:text="${trackId}"></td>
+    </tr>
+  </table>
+</aside>
+</body>
+</html>

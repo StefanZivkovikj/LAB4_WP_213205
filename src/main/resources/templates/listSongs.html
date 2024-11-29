@@ -1,0 +1,104 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Songs Homepage - Welcome to My Music Store</title>
+    <style>
+        body {
+            width: 800px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .add-song-btn {
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .add-song-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to My Music Store</h1>
+</header>
+<main>
+    <h2>Song List</h2>
+
+    <!-- Display error message if it exists -->
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <!-- Add Song Button -->
+    <a href="/songs/add-form" class="add-song-btn">Add New Song</a>
+
+    <!-- Table for displaying songs -->
+    <form action="/artist" method="get">
+        <table>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Release Year</th>
+                <th>Album</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="song, iterStat : ${songs}">
+                <td>
+                    <input type="radio" name="trackId" th:value="${song.trackId}" th:checked="${iterStat.index == 0}">
+                </td>
+                <td th:text="${song.title}">Song Title</td>
+                <td th:text="${song.genre}">Song Genre</td>
+                <td th:text="${song.releaseYear}">Release Year</td>
+                <td th:text="${song.album?.name ?: 'No Album'}">Album Name</td>
+                <td>
+                    <div class="actions">
+                        <!-- Edit Button -->
+                        <a th:href="@{/songs/edit-form/{trackId}(trackId=${song.trackId})}">Edit</a>
+
+                        <!-- Delete Button with its own form -->
+                        <form th:action="@{/songs/delete/{trackId}(trackId=${song.trackId})}" method="post" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- Submit Button for Track Selection -->
+        <input type="submit" value="Submit">
+    </form>
+</main>
+</body>
+</html>
