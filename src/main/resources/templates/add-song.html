@@ -80,6 +80,13 @@
                     th:selected="${song.album?.id == album.id}"></option>
         </select><br>
 
+        <!-- Price -->
+        <div>
+            <label for="price">Price:</label>
+            <input type="text" id="price" name="price" th:value="${song.price != null ? song.price.value : ''}" required>
+        </div>
+
+
         <!-- Submit Button -->
         <button type="submit" th:text="${song.trackId != null ? 'Update Song' : 'Add Song'}"></button>
     </form>

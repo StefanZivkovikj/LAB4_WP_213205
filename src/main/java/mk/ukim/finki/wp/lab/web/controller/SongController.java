@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.web.controller;
 
 import jakarta.servlet.http.HttpSession;
 import mk.ukim.finki.wp.lab.model.Album;
+import mk.ukim.finki.wp.lab.model.Price;
 import mk.ukim.finki.wp.lab.model.Song;
 import mk.ukim.finki.wp.lab.service.AlbumService;
 import mk.ukim.finki.wp.lab.service.SongService;
@@ -42,6 +43,8 @@ public class SongController {
         // Add attributes to the model for the Thymeleaf view
         model.addAttribute("songs", songs);
         model.addAttribute("error", error);
+        System.out.println("Songs sent to view: " + songs);
+
 
         // Return the view name that corresponds to listSongs.html
         return "listSongs";
@@ -96,7 +99,14 @@ public class SongController {
             @RequestParam String title,
             @RequestParam String genre,
             @RequestParam int releaseYear,
-            @RequestParam Long albumId) {
+            @RequestParam Long albumId,
+            @RequestParam String price) {
+
+        System.out.println("Title: " + title);
+        System.out.println("Genre: " + genre);
+        System.out.println("Release Year: " + releaseYear);
+        System.out.println("Album ID: " + albumId);
+        System.out.println("Price: " + price);
 
         Album album = albumService.findAll().stream()
                 .filter(a -> a.getId().equals(albumId))
@@ -107,24 +117,31 @@ public class SongController {
             return "redirect:/songs/add-form?error=InvalidAlbum";
         }
 
-        if ("0".equals(trackId)) {
-            // Add a new song
-            Song newSong = new Song(null, title, genre, releaseYear, List.of(), album);
+        // Correctly initialize the Price object
+        Price finalPrice = new Price(price);
+
+        if ("0".equals(trackId) || trackId == null || trackId.isEmpty()) {
+            // Create a new Song
+            String newTrackId = String.valueOf(songService.generateNextTrackId()); // Ensure getNextTrackId is implemented
+            Song newSong = new Song(newTrackId, title, genre, releaseYear, album, finalPrice);
+            System.out.println("New song created: " + newSong);
             songService.save(newSong);
         } else {
-            // Edit an existing song
+            // Update an existing Song
             Song existingSong = songService.findByTrackId(trackId);
             if (existingSong != null) {
                 existingSong.setTitle(title);
                 existingSong.setGenre(genre);
                 existingSong.setReleaseYear(releaseYear);
                 existingSong.setAlbum(album);
+                existingSong.setPrice(finalPrice);
                 songService.update(existingSong);
             }
         }
 
         return "redirect:/songs";
     }
+
 
 
 
@@ -144,7 +161,8 @@ public class SongController {
             @RequestParam String title,
             @RequestParam String genre,
             @RequestParam int releaseYear,
-            @RequestParam Long albumId) {
+            @RequestParam Long albumId,
+            @RequestParam String price) {
 
         Song song = songService.findByTrackId(trackId);
         if (song != null) {
@@ -153,15 +171,24 @@ public class SongController {
                     .findFirst()
                     .orElse(null);
 
+            if (album == null) {
+                return "redirect:/songs/edit-form/" + trackId + "?error=InvalidAlbum";
+            }
+
+            // Create a Price object from the input
+            Price finalPrice = new Price(price);
+
             song.setTitle(title);
             song.setGenre(genre);
             song.setReleaseYear(releaseYear);
             song.setAlbum(album);
+            song.setPrice(finalPrice); // Set the Price object
             songService.update(song);
         }
 
         return "redirect:/songs";
     }
+
 
     /**
      * Handles deleting a song by its trackId.

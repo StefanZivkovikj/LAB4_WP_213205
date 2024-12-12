@@ -16,16 +16,29 @@ public class Song {
 //    List<Artist> performers;
     private Album album;
 
+    private Price price;
+
     public Song() {
     }
 
-    public Song(String trackId, String title, String genre, int releaseYear, List<Artist> performers,Album album) {
+    public Song(String trackId, String title, String genre, int releaseYear, List<Artist> performers,Album album,Price price) {
         this.trackId = trackId;
         this.title = title;
         this.genre = genre;
         this.releaseYear = releaseYear;
         this.performers = performers != null ? performers : new ArrayList<>();
         this.album = album;
+        this.price = price;
+    }
+
+    public Song(String trackId, String title, String genre, int releaseYear, Album album, Price price) {
+        this.trackId = trackId;
+        this.title = title;
+        this.genre = genre;
+        this.releaseYear = releaseYear;
+        this.performers = performers != null ? performers : new ArrayList<>();
+        this.album = album;
+        this.price = price;
     }
 
     private synchronized static Long generateId() {
@@ -91,4 +104,23 @@ public class Song {
         performers.add(artist); // Adds a performer to the mutable list
     }
 
+    public Price getPrice() {
+        return price;
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "trackId='" + trackId + '\'' +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", releaseYear=" + releaseYear +
+                ", album=" + (album != null ? album.getName() : "No Album") +
+                ", price=" + (price != null ? price.getValue() : "N/A") +
+                '}';
+    }
 }

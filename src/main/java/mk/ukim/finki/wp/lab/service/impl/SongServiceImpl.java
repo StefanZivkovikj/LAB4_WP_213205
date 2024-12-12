@@ -92,9 +92,16 @@ public class SongServiceImpl implements SongService {
         }
         songRepository.save(song);
     }
-    private int generateNextTrackId() {
-        return songRepository.findAll().size() + 1; // Simple trackId generator
+
+    @Override
+    public int generateNextTrackId() {
+        return songRepository.getNextTrackId();
     }
+
+//    public int generateNextTrackId() {
+//        return songRepository.getNextTrackId(); // Delegate to repository for unique track IDs
+//    }
+
 
     @Override
     public List<Song> listSongs() {

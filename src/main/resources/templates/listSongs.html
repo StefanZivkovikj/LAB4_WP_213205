@@ -65,6 +65,7 @@
             <thead>
             <tr>
                 <th>Select</th>
+                <th>Price</th> <!-- Added Price Column -->
                 <th>Title</th>
                 <th>Genre</th>
                 <th>Release Year</th>
@@ -77,6 +78,7 @@
                 <td>
                     <input type="radio" name="trackId" th:value="${song.trackId}" th:checked="${iterStat.index == 0}">
                 </td>
+                <td th:text="${song.price?.value ?: 'N/A'}">Price</td> <!-- Added Price Cell -->
                 <td th:text="${song.title}">Song Title</td>
                 <td th:text="${song.genre}">Song Genre</td>
                 <td th:text="${song.releaseYear}">Release Year</td>

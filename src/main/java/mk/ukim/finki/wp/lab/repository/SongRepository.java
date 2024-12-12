@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.repository;
 
 import mk.ukim.finki.wp.lab.model.Album;
 import mk.ukim.finki.wp.lab.model.Artist;
+import mk.ukim.finki.wp.lab.model.Price;
 import mk.ukim.finki.wp.lab.model.Song;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Repository
 public class SongRepository {
     private final List<Song> songs;
-    private int trackIdCounter = 1;
+    private int trackIdCounter = 6;
 
     public SongRepository(AlbumRepository albumRepository) {
         this.songs = new ArrayList<>();
@@ -21,11 +22,12 @@ public class SongRepository {
         List<Album> albums = albumRepository.findAll();
 
         // Initialize songs with associated albums
-        songs.add(new Song("1", "Song 1", "Rock", 2020, List.of(new Artist(1L, "Artist A", "Rock", "TestBio")), albums.get(1)));
-        songs.add(new Song("2", "Song 2", "Pop", 2019, List.of(new Artist(2L, "Artist B", "Pop", "BioTest")), albums.get(0)));
-        songs.add(new Song("3", "Song 3", "Jazz", 2018, List.of(new Artist(3L, "Artist C", "Jazz", "TestTest")), albums.get(3)));
-        songs.add(new Song("4", "Song 4", "Classical", 2017, List.of(new Artist(4L, "Artist D", "Classical", "Test1")), albums.get(2)));
-        songs.add(new Song("5", "Song 5", "Hip Hop", 2021, List.of(new Artist(5L, "Artist E", "Hip Hop", "Test2")), albums.get(4)));
+        // Initialize songs with associated albums and prices
+        songs.add(new Song("1", "Song 1", "Rock", 2020, List.of(new Artist(1L, "Artist A", "Rock", "TestBio")), albums.get(0), new Price("9.99")));
+        songs.add(new Song("2", "Song 2", "Pop", 2019, List.of(new Artist(2L, "Artist B", "Pop", "BioTest")), albums.get(1), new Price("12.99")));
+        songs.add(new Song("3", "Song 3", "Jazz", 2018, List.of(new Artist(3L, "Artist C", "Jazz", "TestBio")), albums.get(2), new Price("Free")));
+        songs.add(new Song("4", "Song 4", "Classical", 2017, List.of(new Artist(4L, "Artist D", "Classical", "BioTest")), albums.get(3), new Price("14.99")));
+        songs.add(new Song("5", "Song 5", "Hip Hop", 2021, List.of(new Artist(5L, "Artist E", "Hip Hop", "TestBio")), albums.get(4), new Price("19.99")));
     }
 
     /**
@@ -34,13 +36,22 @@ public class SongRepository {
      * @return List of songs
      */
     public List<Song> findAll() {
-        return new ArrayList<>(songs);
+        System.out.println("Current songs in repository: " + songs);
+        return new ArrayList<>(songs); // Returns a copy of the songs list
     }
 
+
     public Song save(Song song) {
-        songs.add(song);
+        Song existingSong = findByTrackId(song.getTrackId());
+        if (existingSong != null) {
+            update(song); // Update the existing song
+        } else {
+            songs.add(song); // Add a new song
+        }
         return song;
     }
+
+
 
     /**
      * Finds a song by its track ID.
@@ -66,14 +77,16 @@ public class SongRepository {
 
     // Update a song by trackId
     public void update(Song updatedSong) {
-        Song existingSong = findByTrackId(updatedSong.getTrackId());
-        if (existingSong != null) {
-            existingSong.setTitle(updatedSong.getTitle());
-            existingSong.setGenre(updatedSong.getGenre());
-            existingSong.setReleaseYear(updatedSong.getReleaseYear());
-            existingSong.setAlbum(updatedSong.getAlbum());
+        for (int i = 0; i < songs.size(); i++) {
+            Song existingSong = songs.get(i);
+            if (existingSong.getTrackId().equals(updatedSong.getTrackId())) {
+                songs.set(i, updatedSong); // Replace the song at the current index
+                return;
+            }
         }
     }
+
+
     /**
      * Adds a new song to the repository.
      *
@@ -102,10 +115,10 @@ public class SongRepository {
      * @param song   The song to which the artist will be added.
      * @return The added artist.
      */
-    public Artist addArtistToSong(Artist artist, Song song) {
-        song.getPerformers().add(artist);
-        return artist;
-    }
+//    public Artist addArtistToSong(Artist artist, Song song) {
+//        song.getPerformers().add(artist);
+//        return artist;
+//    }
 
 
 
