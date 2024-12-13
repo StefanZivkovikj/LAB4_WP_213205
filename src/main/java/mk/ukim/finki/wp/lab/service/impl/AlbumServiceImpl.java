@@ -16,9 +16,23 @@ public class AlbumServiceImpl implements AlbumService {
         this.albumRepository = albumRepository;
     }
 
-
     @Override
     public List<Album> findAll() {
         return albumRepository.findAll();
+    }
+
+    @Override
+    public Album findById(Long albumId) {
+        return albumRepository.findById(albumId).orElse(null);
+    }
+
+    @Override
+    public Album save(Album album) {
+        return albumRepository.save(album);
+    }
+
+    @Override
+    public void deleteById(Long albumId) {
+        albumRepository.deleteById(albumId);
     }
 }

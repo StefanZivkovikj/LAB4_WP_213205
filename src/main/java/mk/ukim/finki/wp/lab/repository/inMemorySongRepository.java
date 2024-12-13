@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class SongRepository {
+public class inMemorySongRepository {
     private final List<Song> songs;
     private int trackIdCounter = 6;
 
-    public SongRepository(AlbumRepository albumRepository) {
+    public inMemorySongRepository(inMemoryAlbumRepository albumRepository) {
         this.songs = new ArrayList<>();
 
 

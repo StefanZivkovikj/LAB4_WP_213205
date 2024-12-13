@@ -33,15 +33,16 @@ public class SongController {
      * @return The view name for the song list page.
      */
     @GetMapping
-    public String getSongsPage(@RequestParam(required = false) String error, Model model, HttpSession session) {
+    public String getSongsPage(@RequestParam(required = false) String error, @RequestParam(required = false) Long albumId, Model model, HttpSession session) {
         // Ensure the session attribute is set as required
         session.setAttribute("canAccessArtistPage", true);
 
         // Fetch the list of songs
         List<Song> songs = songService.findAll();
-
+        List<Album> albums = albumService.findAll(); // Fetch all albums
         // Add attributes to the model for the Thymeleaf view
         model.addAttribute("songs", songs);
+        model.addAttribute("albums", albums); // Pass albums to the view
         model.addAttribute("error", error);
         System.out.println("Songs sent to view: " + songs);
 
@@ -93,54 +94,70 @@ public class SongController {
      * @param albumId     The ID of the associated album.
      * @return Redirection to the list of songs.
      */
-    @PostMapping("/{trackId}")
+    @PostMapping("/save")
     public String saveOrUpdateSong(
-            @PathVariable String trackId,
+            @RequestParam(required = false) String trackId,
             @RequestParam String title,
             @RequestParam String genre,
             @RequestParam int releaseYear,
             @RequestParam Long albumId,
-            @RequestParam String price) {
+            @RequestParam String price,
+            Model model) {
 
-        System.out.println("Title: " + title);
-        System.out.println("Genre: " + genre);
-        System.out.println("Release Year: " + releaseYear);
-        System.out.println("Album ID: " + albumId);
-        System.out.println("Price: " + price);
+        System.out.println("Saving or updating song...");
+        System.out.printf("Title: %s, Track ID: %s, Genre: %s, Year: %d, Album ID: %d, Price: %s%n",
+                title, trackId, genre, releaseYear, albumId, price);
 
-        Album album = albumService.findAll().stream()
-                .filter(a -> a.getId().equals(albumId))
-                .findFirst()
-                .orElse(null);
-
+        // Validate Album
+        Album album = albumService.findById(albumId);
         if (album == null) {
-            return "redirect:/songs/add-form?error=InvalidAlbum";
+            model.addAttribute("error", "Invalid album selected!");
+            return "add-song";
         }
 
-        // Correctly initialize the Price object
-        Price finalPrice = new Price(price);
+        // Parse Price
+        Price finalPrice;
+        try {
+            finalPrice = new Price(price);
+        } catch (Exception e) {
+            model.addAttribute("error", "Invalid price format!");
+            return "add-song";
+        }
 
-        if ("0".equals(trackId) || trackId == null || trackId.isEmpty()) {
+        // Handle Track ID Generation and Song Creation/Update
+        if (trackId == null || trackId.isEmpty()) {
+            // Generate the next track ID
+            String maxTrackId = songService.findMaxTrackId();
+            int nextId = (maxTrackId != null && maxTrackId.startsWith("T"))
+                    ? Integer.parseInt(maxTrackId.substring(1)) + 1
+                    : 1;
+            String newTrackId = "T" + nextId;
+
             // Create a new Song
-            String newTrackId = String.valueOf(songService.generateNextTrackId()); // Ensure getNextTrackId is implemented
             Song newSong = new Song(newTrackId, title, genre, releaseYear, album, finalPrice);
-            System.out.println("New song created: " + newSong);
             songService.save(newSong);
+            System.out.println("New song added: " + newSong);
         } else {
             // Update an existing Song
             Song existingSong = songService.findByTrackId(trackId);
-            if (existingSong != null) {
-                existingSong.setTitle(title);
-                existingSong.setGenre(genre);
-                existingSong.setReleaseYear(releaseYear);
-                existingSong.setAlbum(album);
-                existingSong.setPrice(finalPrice);
-                songService.update(existingSong);
+            if (existingSong == null) {
+                model.addAttribute("error", "Song not found!");
+                return "add-song";
             }
+
+            existingSong.setTitle(title);
+            existingSong.setGenre(genre);
+            existingSong.setReleaseYear(releaseYear);
+            existingSong.setAlbum(album);
+            existingSong.setPrice(finalPrice);
+
+            songService.update(existingSong);
+            System.out.println("Song updated: " + existingSong);
         }
 
         return "redirect:/songs";
     }
+
 
 
 
@@ -201,4 +218,29 @@ public class SongController {
         songService.deleteByTrackId(trackId);
         return "redirect:/songs";
     }
+
+    @GetMapping("/by-album/{albumId}")
+    public String getSongsByAlbum(@PathVariable Long albumId, Model model) {
+        List<Song> songs = songService.findAllByAlbum_Id(albumId);
+        model.addAttribute("songs", songs);
+        return "listSongs";
+    }
+
+    @PostMapping("/by-album")
+    public String filterSongsByAlbum(@RequestParam(name = "albumId", defaultValue = "-1")  Long albumId, Model model) {
+
+        List<Song> songs = songService.findAllByAlbum_Id(albumId);
+        System.out.println("Filtered songs: " + songs);
+        List<Album> albums = albumService.findAll(); // Include albums for dropdown
+        if (albums.isEmpty()) {
+            System.out.println("No albums found!");
+        }
+
+        model.addAttribute("songs", songs);
+        model.addAttribute("albums", albums);
+        System.out.println("Album ID received: " + albumId); // Debug log
+
+        return "listSongs";
+    }
+
 }

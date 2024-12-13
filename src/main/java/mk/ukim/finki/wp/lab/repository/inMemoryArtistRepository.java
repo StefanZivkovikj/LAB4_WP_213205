@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class ArtistRepository {
+public class inMemoryArtistRepository {
     private final List<Artist> artists;
 
-    public ArtistRepository() {
+    public inMemoryArtistRepository() {
         this.artists = new ArrayList<>();
 
         artists.add(new Artist(1L, "Axl", "Rose", "Lead vocalist of Guns N' Roses"));

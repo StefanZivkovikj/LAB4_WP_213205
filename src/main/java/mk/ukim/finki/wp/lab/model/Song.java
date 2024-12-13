@@ -1,21 +1,36 @@
 package mk.ukim.finki.wp.lab.model;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Song {
 
-    private List<Artist> performers = new ArrayList<>();
-    private static Long currentId = 1L;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     String trackId;
     String title;
     String genre;
     int releaseYear;
 //    List<Artist> performers;
+    @ManyToOne
     private Album album;
 
+    @Transient
+    private static Long currentId = 1L;
+
+//   @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "song_artist",
+        joinColumns = @JoinColumn(name = "song_id"),
+        inverseJoinColumns = @JoinColumn(name = "artist_id")
+)
+    private List<Artist> performers = new ArrayList<>();
+    @Embedded
     private Price price;
 
     public Song() {

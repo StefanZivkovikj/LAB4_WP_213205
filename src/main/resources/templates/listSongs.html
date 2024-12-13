@@ -42,6 +42,15 @@
         .add-song-btn:hover {
             background-color: #45a049;
         }
+
+        .filter {
+            margin-bottom: 20px;
+        }
+
+        .filter select, .filter button {
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -59,13 +68,29 @@
     <!-- Add Song Button -->
     <a href="/songs/add-form" class="add-song-btn">Add New Song</a>
 
+    <!-- Filter Songs by Album -->
+    <div class="filter">
+        <form th:action="@{/songs/by-album}" method="post">
+            <select name="albumId" required>
+                <option value="" disabled selected>Select Album</option>
+                <option th:each="album : ${albums}" th:value="${album.id}" th:text="${album.name}"></option>
+            </select>
+            <button type="submit">Filter by Album</button>
+        </form>
+
+        <!-- Show All Songs Button -->
+        <form th:action="@{/songs}" method="get" style="display: inline;">
+            <button type="submit">Show All Songs</button>
+        </form>
+    </div>
+
     <!-- Table for displaying songs -->
     <form action="/artist" method="get">
         <table>
             <thead>
             <tr>
                 <th>Select</th>
-                <th>Price</th> <!-- Added Price Column -->
+                <th>Price</th>
                 <th>Title</th>
                 <th>Genre</th>
                 <th>Release Year</th>
@@ -78,7 +103,7 @@
                 <td>
                     <input type="radio" name="trackId" th:value="${song.trackId}" th:checked="${iterStat.index == 0}">
                 </td>
-                <td th:text="${song.price?.value ?: 'N/A'}">Price</td> <!-- Added Price Cell -->
+                <td th:text="${song.price?.value ?: 'N/A'}">Price</td>
                 <td th:text="${song.title}">Song Title</td>
                 <td th:text="${song.genre}">Song Genre</td>
                 <td th:text="${song.releaseYear}">Release Year</td>

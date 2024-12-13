@@ -1,7 +1,14 @@
 package mk.ukim.finki.wp.lab.model;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class Price {
     private final String value;
+
+    public Price() {
+        this.value = "N/A"; // Default value
+    }
 
     public Price(String value) {
         this.value = (value == null || value.trim().isEmpty()) ? "N/A" : value.trim();
@@ -10,6 +17,7 @@ public class Price {
     public String getValue() {
         return value;
     }
+
 
     public boolean isNumeric() {
         try {

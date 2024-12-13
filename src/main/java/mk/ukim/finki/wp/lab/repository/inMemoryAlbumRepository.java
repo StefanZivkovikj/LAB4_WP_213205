@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class AlbumRepository {
+public class inMemoryAlbumRepository {
     private final List<Album> albums;
 
-    public AlbumRepository() {
+    public inMemoryAlbumRepository() {
         this.albums = new ArrayList<>();
 
         // Initialize albums
