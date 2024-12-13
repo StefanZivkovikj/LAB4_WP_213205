@@ -23,11 +23,11 @@ public class SongRepository {
 
         // Initialize songs with associated albums
         // Initialize songs with associated albums and prices
-        songs.add(new Song("1", "Song 1", "Rock", 2020, List.of(new Artist(1L, "Artist A", "Rock", "TestBio")), albums.get(0), new Price("9.99")));
-        songs.add(new Song("2", "Song 2", "Pop", 2019, List.of(new Artist(2L, "Artist B", "Pop", "BioTest")), albums.get(1), new Price("12.99")));
+        songs.add(new Song("1", "Song 1", "Rock", 2020, List.of(new Artist(1L, "Artist A", "Rock", "TestBio")), albums.get(0), new Price("$9.99")));
+        songs.add(new Song("2", "Song 2", "Pop", 2019, List.of(new Artist(2L, "Artist B", "Pop", "BioTest")), albums.get(1), new Price("$12.99")));
         songs.add(new Song("3", "Song 3", "Jazz", 2018, List.of(new Artist(3L, "Artist C", "Jazz", "TestBio")), albums.get(2), new Price("Free")));
-        songs.add(new Song("4", "Song 4", "Classical", 2017, List.of(new Artist(4L, "Artist D", "Classical", "BioTest")), albums.get(3), new Price("14.99")));
-        songs.add(new Song("5", "Song 5", "Hip Hop", 2021, List.of(new Artist(5L, "Artist E", "Hip Hop", "TestBio")), albums.get(4), new Price("19.99")));
+        songs.add(new Song("4", "Song 4", "Classical", 2017, List.of(new Artist(4L, "Artist D", "Classical", "BioTest")), albums.get(3), new Price("$14.99")));
+        songs.add(new Song("5", "Song 5", "Hip Hop", 2021, List.of(new Artist(5L, "Artist E", "Hip Hop", "TestBio")), albums.get(4), new Price("$19.99")));
     }
 
     /**
