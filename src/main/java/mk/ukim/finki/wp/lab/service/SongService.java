@@ -33,6 +33,10 @@ public interface SongService {
 
     String findMaxTrackId();
 
+    List<Song> filterSongs(Long albumId, String price, String title, String genre, String releaseYear);
+
+    List<String> findAllGenres();
+
 //     List<Song> findByAlbumId(Long albumId);
 
 

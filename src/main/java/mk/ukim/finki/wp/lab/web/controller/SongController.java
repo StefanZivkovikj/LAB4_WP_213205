@@ -40,9 +40,11 @@ public class SongController {
         // Fetch the list of songs
         List<Song> songs = songService.findAll();
         List<Album> albums = albumService.findAll(); // Fetch all albums
+        List<String> genres = songService.findAllGenres();
         // Add attributes to the model for the Thymeleaf view
         model.addAttribute("songs", songs);
         model.addAttribute("albums", albums); // Pass albums to the view
+        model.addAttribute("genres", genres); // Pass genres to the view
         model.addAttribute("error", error);
         System.out.println("Songs sent to view: " + songs);
 
@@ -226,21 +228,49 @@ public class SongController {
         return "listSongs";
     }
 
-    @PostMapping("/by-album")
-    public String filterSongsByAlbum(@RequestParam(name = "albumId", defaultValue = "-1")  Long albumId, Model model) {
+//    @PostMapping("/by-album")
+//    public String filterSongsByAlbum(@RequestParam(name = "albumId", defaultValue = "-1")  Long albumId, Model model) {
+//
+//        List<Song> songs = songService.findAllByAlbum_Id(albumId);
+//        System.out.println("Filtered songs: " + songs);
+//        List<Album> albums = albumService.findAll(); // Include albums for dropdown
+//        if (albums.isEmpty()) {
+//            System.out.println("No albums found!");
+//        }
+//
+//        model.addAttribute("songs", songs);
+//        model.addAttribute("albums", albums);
+//        System.out.println("Album ID received: " + albumId); // Debug log
+//
+//        return "listSongs";
+//    }
 
-        List<Song> songs = songService.findAllByAlbum_Id(albumId);
-        System.out.println("Filtered songs: " + songs);
-        List<Album> albums = albumService.findAll(); // Include albums for dropdown
-        if (albums.isEmpty()) {
-            System.out.println("No albums found!");
-        }
+    @PostMapping("/filter")
+    public String filterSongs(
+            @RequestParam(required = false) Long albumId,
+            @RequestParam(required = false) String price,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String releaseYear,
+            Model model) {
 
-        model.addAttribute("songs", songs);
+        // Fetch all albums and genres for the filter dropdowns
+        List<Album> albums = albumService.findAll();
+        List<String> genres = songService.findAllGenres(); // Implement this method in SongService
+
+        System.out.println("Filter Criteria:");
+        System.out.printf("Album ID: %s, Price: %s, Title: %s, Genre: %s, Release Year: %s%n",
+                albumId, price, title, genre, releaseYear);
+
+        // Filter songs based on criteria
+        List<Song> filteredSongs = songService.filterSongs(albumId, price, title, genre, releaseYear);
+
         model.addAttribute("albums", albums);
-        System.out.println("Album ID received: " + albumId); // Debug log
+        model.addAttribute("genres", genres);
+        model.addAttribute("songs", filteredSongs);
 
         return "listSongs";
     }
+
 
 }

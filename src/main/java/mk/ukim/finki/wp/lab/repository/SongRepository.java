@@ -12,4 +12,8 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     @Query("SELECT MAX(CAST(SUBSTRING(s.trackId, 2) AS int)) FROM Song s")
     String findMaxTrackId();
+
+    @Query("SELECT DISTINCT s.genre FROM Song s")
+    List<String> findAllGenres();
+
 }

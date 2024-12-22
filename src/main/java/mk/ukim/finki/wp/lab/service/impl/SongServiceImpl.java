@@ -106,4 +106,36 @@ public class SongServiceImpl implements SongService {
 //    public List<Song> findByAlbumId(Long albumId) {
 //        return songRepository.findAllByAlbum_Id(albumId);
 //    }
+
+  @Override
+public List<Song> filterSongs(Long albumId, String price, String title, String genre, String releaseYear) {
+    return songRepository.findAll().stream()
+        .filter(song -> albumId == null || albumId == -1 || song.getAlbum().getId().equals(albumId))
+        .filter(song -> price == null || price.isEmpty() || song.getPrice().getValue().toString().equals(price))
+        .filter(song -> title == null || title.isEmpty() || song.getTitle().toLowerCase().contains(title.toLowerCase()))
+        .filter(song -> genre == null || genre.isEmpty() || song.getGenre().equalsIgnoreCase(genre))
+        .filter(song -> {
+            if (releaseYear == null || releaseYear.isEmpty()) return true;
+            int year = song.getReleaseYear();
+            switch (releaseYear) {
+                case "60s": return year >= 1960 && year < 1970;
+                case "70s": return year >= 1970 && year < 1980;
+                case "80s": return year >= 1980 && year < 1990;
+                case "90s": return year >= 1990 && year < 2000;
+                case "00s": return year >= 2000 && year < 2010;
+                case "10s": return year >= 2010 && year < 2020;
+                case "20s": return year >= 2020 && year < 2030;
+                case "30s": return year >= 2030 && year < 2040;
+                default: return false;
+            }
+        })
+        .toList();
+}
+
+
+    @Override
+    public List<String> findAllGenres() {
+        return songRepository.findAllGenres();
+    }
+
 }
